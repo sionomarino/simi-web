@@ -1,33 +1,45 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+// script.js o main.js
+
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, onValue, set } from "firebase/database";
 import { firebaseConfig } from "./firebase-config.js";
 
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const db = getDatabase(app);
 
-// Mostrar datos en la sección de monitoreo
-const voltageEl = document.getElementById("voltage");
-const currentEl = document.getElementById("current");
-const powerEl = document.getElementById("power");
-const energyEl = document.getElementById("energy");
+// 🟡 Monitoreo (EMMOTHER)
+const voltajeSpan = document.getElementById("voltaje");
+const corrienteSpan = document.getElementById("corriente");
+const potenciaSpan = document.getElementById("potencia");
+const energiaSpan = document.getElementById("energia");
+const costoSpan = document.getElementById("costo");
 
-const emmotherRef = ref(database, 'emmother');
-onValue(emmotherRef, (snapshot) => {
+// Escuchar datos del Emmother
+onValue(ref(db, "Emmother"), (snapshot) => {
   const data = snapshot.val();
-  voltageEl.textContent = ${data.voltage} V;
-  currentEl.textContent = ${data.current} A;
-  powerEl.textContent = ${data.power} W;
-  energyEl.textContent = ${data.energy} kWh;
+  if (!data) return;
+  voltajeSpan.textContent = data.voltaje ?? "--";
+  corrienteSpan.textContent = data.corriente ?? "--";
+  potenciaSpan.textContent = data.potencia ?? "--";
+  energiaSpan.textContent = data.energia ?? "--";
+  
+  // Calcular costo estimado (ejemplo: $50 por kWh)
+  const precioPorKwh = 50;
+  const costo = (data.energia ?? 0) * precioPorKwh;
+  costoSpan.textContent = costo.toFixed(2);
 });
 
-// Controlar el relé del EMSON
-const btnOn = document.getElementById("btnOn");
-const btnOff = document.getElementById("btnOff");
+// 🔌 Control (EMSON)
+const estadoSpan = document.getElementById("estado");
 
-btnOn.addEventListener("click", () => {
-  set(ref(database, 'emson'), { relay: 1 });
+// Escuchar estado actual del relé
+onValue(ref(db, "Emson/estado"), (snapshot) => {
+  const estado = snapshot.val();
+  estadoSpan.textContent = estado ? "Encendido" : "Apagado";
 });
 
-btnOff.addEventListener("click", () => {
-  set(ref(database, 'emson'), { relay: 0 });
-});
+// Función para cambiar el estado del relé
+window.cambiarEstado = function (nuevoEstado) {
+  set(ref(db, "Emson/estado"), nuevoEstado);
+};
