@@ -1,10 +1,6 @@
-// firebase-config.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
 
-// Importar desde Firebase versión modular (v9+)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
-
-// Configuración de tu proyecto Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyB6ez2tHn1EnZKm1rsZMVy17agEEi8DKS0",
   authDomain: "simi-base.firebaseapp.com",
@@ -16,11 +12,7 @@ const firebaseConfig = {
   measurementId: "G-G6B14VPJM1"
 };
 
-// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-
-// Inicializar base de datos
 const db = getDatabase(app);
 
-// Exportar para que lo uses en script.js
-export { db, ref, onValue };
+export { db };
