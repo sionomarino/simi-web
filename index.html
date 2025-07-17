@@ -2,28 +2,38 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIMI - Monitoreo Energético</title>
+  <title>SIMI - Sistema de Monitoreo Inteligente</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module" 
-    src="firebase-config.js"></script>
-<script src="script.js"></script>
+  <script type="module" src="firebase-config.js"></script>
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo SIMI" class="logo">
-    <h1>SIMI - Sistema de Monitoreo Inteligente</h1>
+    <h1>SIMI</h1>
+    <nav>
+      <button onclick="showSection('monitoreo')">Monitoreo</button>
+      <button onclick="showSection('control')">Control</button>
+    </nav>
   </header>
 
   <main>
-    <div class="dato">Voltaje: <span id="voltaje">--</span> V</div>
-    <div class="dato">Corriente: <span id="corriente">--</span> A</div>
-    <div class="dato">Potencia: <span id="potencia">--</span> W</div>
-    <div class="dato">Energía: <span id="energia">--</span> kWh</div>
-    <div class="dato">Costo estimado: $<span id="costo">--</span></div>
+    <!-- Sección MONITOREO -->
+    <section id="monitoreo" class="active">
+      <h2>Monitoreo de Consumo</h2>
+      <p>Voltaje: <span id="voltaje">--</span> V</p>
+      <p>Corriente: <span id="corriente">--</span> A</p>
+      <p>Potencia: <span id="potencia">--</span> W</p>
+      <p>Energía acumulada: <span id="energia">--</span> kWh</p>
+    </section>
+
+    <!-- Sección CONTROL -->
+    <section id="control">
+      <h2>Control de Dispositivos</h2>
+      <p>Estado del Emson:</p>
+      <button id="btnEncender">Encender</button>
+      <button id="btnApagar">Apagar</button>
+    </section>
   </main>
 
-  <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
