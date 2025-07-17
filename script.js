@@ -1,31 +1,33 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
-import { firebaseConfig } from './firebase-config.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { firebaseConfig } from "./firebase-config.js";
 
-// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const database = getDatabase(app);
 
-// Mostrar datos en tiempo real (Emmother)
-onValue(ref(db, 'emmother'), (snapshot) => {
+// Mostrar datos en la sección de monitoreo
+const voltageEl = document.getElementById("voltage");
+const currentEl = document.getElementById("current");
+const powerEl = document.getElementById("power");
+const energyEl = document.getElementById("energy");
+
+const emmotherRef = ref(database, 'emmother');
+onValue(emmotherRef, (snapshot) => {
   const data = snapshot.val();
-  document.getElementById("voltaje").innerText = data.voltaje ?? '--';
-  document.getElementById("corriente").innerText = data.corriente ?? '--';
-  document.getElementById("potencia").innerText = data.potencia ?? '--';
-  document.getElementById("energia").innerText = data.energia ?? '--';
+  voltageEl.textContent = ${data.voltage} V;
+  currentEl.textContent = ${data.current} A;
+  powerEl.textContent = ${data.power} W;
+  energyEl.textContent = ${data.energy} kWh;
 });
 
-// Control de Emson
-document.getElementById("btnEncender").addEventListener("click", () => {
-  set(ref(db, 'emson/control'), "on");
+// Controlar el relé del EMSON
+const btnOn = document.getElementById("btnOn");
+const btnOff = document.getElementById("btnOff");
+
+btnOn.addEventListener("click", () => {
+  set(ref(database, 'emson'), { relay: 1 });
 });
 
-document.getElementById("btnApagar").addEventListener("click", () => {
-  set(ref(db, 'emson/control'), "off");
+btnOff.addEventListener("click", () => {
+  set(ref(database, 'emson'), { relay: 0 });
 });
-
-// Navegación entre secciones
-window.showSection = function (id) {
-  document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-};
