@@ -1,60 +1,47 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIMI - Sistema de Monitoreo</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIMI - Monitoreo y Control</title>
+  <link rel="stylesheet" href="style.css" />
   <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="script.js" defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script type="module" src="main.js" defer></script>
 </head>
 <body>
-  <div class="container">
-    <aside class="sidebar">
-      <h2>SIMI</h2>
-      <nav>
-        <ul>
-          <li class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
-          <li data-section="control"><i class="fas fa-toggle-on"></i> Control</li>
-        </ul>
-      </nav>
-    </aside><main class="main-content">
-  <header>
-    <h1 id="section-title">Energy Dashboard</h1>
-    <span id="last-update">Last updated: --</span>
-  </header>
-
-  <section id="dashboard-section" class="section active">
-    <div class="cards">
-      <div class="card">
-        <h3>Voltage</h3>
-        <p><span id="voltage">--</span> V</p>
-      </div>
-      <div class="card">
-        <h3>Current</h3>
-        <p><span id="current">--</span> A</p>
-      </div>
-      <div class="card">
-        <h3>Power</h3>
-        <p><span id="power">--</span> W</p>
-      </div>
-      <div class="card">
-        <h3>Energy</h3>
-        <p><span id="energy">--</span> kWh</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="control-section" class="section">
-    <div class="control-box">
-      <h2>Control de Energía</h2>
-      <button id="turn-on" class="btn btn-green">Encender</button>
-      <button id="turn-off" class="btn btn-red">Apagar</button>
-    </div>
-  </section>
-</main>
-
+  <div class="sidebar">
+    <h2>SIMI</h2>
+    <ul>
+      <li class="active" onclick="mostrarSeccion('dashboard')">Monitoreo</li>
+      <li onclick="mostrarSeccion('control')">Control</li>
+    </ul>
   </div>
+
+  <div class="main">
+    <div id="dashboard" class="seccion">
+      <h1>Monitoreo Energético</h1>
+      <div class="dato">Voltaje: <span id="voltaje">--</span> V</div>
+      <div class="dato">Corriente: <span id="corriente">--</span> A</div>
+      <div class="dato">Potencia: <span id="potencia">--</span> W</div>
+      <div class="dato">Energía: <span id="energia">--</span> kWh</div>
+      <div class="dato">Costo estimado: $<span id="costo">--</span></div>
+    </div>
+
+    <div id="control" class="seccion oculto">
+      <h1>Control de Dispositivos</h1>
+      <button onclick="cambiarEstado(true)">Encender</button>
+      <button onclick="cambiarEstado(false)">Apagar</button>
+      <p>Estado actual: <span id="estado">--</span></p>
+    </div>
+  </div>
+
+  <script>
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.seccion').forEach(sec => sec.classList.add('oculto'));
+      document.getElementById(id).classList.remove('oculto');
+      document.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+      document.querySelector(`li[onclick*='${id}']`).classList.add('active');
+    }
+  </script>
 </body>
 </html>
