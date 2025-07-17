@@ -1,22 +1,31 @@
-import { db } from './firebase-config.js';
-import { ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+import { firebaseConfig } from './firebase-config.js';
 
-function actualizarDato(id, valor, decimales = 2) {
-  const elemento = document.getElementById(id);
-  if (elemento && valor !== undefined) {
-    elemento.textContent = parseFloat(valor).toFixed(decimales);
-  }
-}
+// Inicializa Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-// Emmother (medición total del hogar)
-const refEmmother = ref(db, 'emmother/');
-onValue(refEmmother, (snapshot) => {
+// Mostrar datos en tiempo real (Emmother)
+onValue(ref(db, 'emmother'), (snapshot) => {
   const data = snapshot.val();
-  if (data) {
-    actualizarDato("voltaje", data.voltaje, 1);
-    actualizarDato("corriente", data.corriente, 2);
-    actualizarDato("potencia", data.potencia, 0);
-    actualizarDato("energia", data.energia, 3);
-    actualizarDato("costo", data.costo, 2);
-  }
+  document.getElementById("voltaje").innerText = data.voltaje ?? '--';
+  document.getElementById("corriente").innerText = data.corriente ?? '--';
+  document.getElementById("potencia").innerText = data.potencia ?? '--';
+  document.getElementById("energia").innerText = data.energia ?? '--';
 });
+
+// Control de Emson
+document.getElementById("btnEncender").addEventListener("click", () => {
+  set(ref(db, 'emson/control'), "on");
+});
+
+document.getElementById("btnApagar").addEventListener("click", () => {
+  set(ref(db, 'emson/control'), "off");
+});
+
+// Navegación entre secciones
+window.showSection = function (id) {
+  document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+};
