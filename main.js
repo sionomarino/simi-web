@@ -1,31 +1,33 @@
-import { db, ref, onValue, set } from './firebase-config.js';
+// main.js
+import { supabase } from "./supabase-config.js";
 
-const voltSpan = document.getElementById("voltaje");
-const corrSpan = document.getElementById("corriente");
-const potSpan  = document.getElementById("potencia");
-const enerSpan = document.getElementById("energia");
-const costSpan = document.getElementById("costo");
-const estadoSpan = document.getElementById("estado");
+// Carga inicial
+async function cargarDatos() {
+  const { data, error } = await supabase
+    .from("emmother_data")
+    .select("*")
+    .order("timestamp", { ascending: false })
+    .limit(1);
 
-// Monitoreo - datos del Emmother
-onValue(ref(db, "emmother"), (snapshot) => {
-  const data = snapshot.val();
-  voltSpan.innerText = data?.voltaje ?? "--";
-  corrSpan.innerText = data?.corriente ?? "--";
-  potSpan.innerText  = data?.potencia ?? "--";
-  enerSpan.innerText = data?.energia ?? "--";
-  costSpan.innerText = data?.costo ?? "--";
-});
+  if (data && data.length) {
+    const { voltaje, corriente, potencia, energia, costo } = data[0];
+    document.getElementById("voltaje").innerText = voltaje.toFixed(1);
+    document.getElementById("corriente").innerText = corriente.toFixed(2);
+    document.getElementById("potencia").innerText = potencia.toFixed(0);
+    document.getElementById("energia").innerText = energia.toFixed(3);
+    document.getElementById("costo").innerText = costo.toFixed(2);
+  }
+}
 
-// Control - Emson
-onValue(ref(db, "emson/estado"), (snapshot) => {
-  const estado = snapshot.val();
-  estadoSpan.innerText = estado ? "Encendido" : "Apagado";
-});
+async function cambiarEstado(encender) {
+  const { error } = await supabase
+    .from("emson_control")
+    .update({ estado: encender ? "on" : "off" })
+    .eq("id", 1);
+  if (!error) {
+    document.getElementById("estado").innerText = encender ? "Encendido" : "Apagado";
+  }
+}
 
-document.getElementById("btn-encender").addEventListener("click", () => {
-  set(ref(db, "emson/estado"), true);
-});
-document.getElementById("btn-apagar").addEventListener("click", () => {
-  set(ref(db, "emson/estado"), false);
-});
+setInterval(cargarDatos, 5000);
+cargarDatos();
