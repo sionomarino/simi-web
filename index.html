@@ -6,7 +6,7 @@
   <title>SIMI - Monitoreo y Control</title>
   <link rel="stylesheet" href="style.css" />
   <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="script.js" defer></script>
+  <script type="module" src="main.js" defer></script>
 </head>
 <body>
   <div class="sidebar">
@@ -29,8 +29,8 @@
 
     <div id="control" class="seccion oculto">
       <h1>Control de Dispositivos</h1>
-      <button onclick="cambiarEstado(true)">Encender</button>
-      <button onclick="cambiarEstado(false)">Apagar</button>
+      <button id="btn-encender">Encender</button>
+      <button id="btn-apagar">Apagar</button>
       <p>Estado actual: <span id="estado">--</span></p>
     </div>
   </div>
