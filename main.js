@@ -3,7 +3,7 @@ import { supabase } from "./supabase-config.js";
 // 🔄 ACTUALIZAR DATOS DE EMMOTHER
 async function actualizarDatos() {
   const { data, error } = await supabase
-    .from("emmother")
+    .from("emmother_data")
     .select("*")
     .eq("id", 1)
     .single();
