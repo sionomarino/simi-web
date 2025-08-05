@@ -1,15 +1,14 @@
 import { supabase } from './supabase-config.js';
 
-// Actualiza los datos del monitoreo desde Emmother
 async function actualizarDatos() {
   const { data, error } = await supabase
     .from("emmother_data")
     .select("*")
     .order("timestamp", { ascending: false })
-    .limit(1);
+    .limit(1);  // ✅ nos aseguramos que venga solo una fila
 
-  if (error || !data.length) {
-    console.error("Error al leer datos de Emmother:", error);
+  if (error || !data || data.length === 0) {
+    console.error("Error al leer datos de Emmother:", error?.message || "No hay datos");
     return;
   }
 
@@ -22,7 +21,6 @@ async function actualizarDatos() {
   document.getElementById("costo").innerText = em.costo?.toFixed(2) ?? "--";
 }
 
-// Cambia el estado del Emson (control remoto)
 async function cambiarEstado(encender) {
   const { error } = await supabase
     .from("emson_control")
@@ -36,9 +34,7 @@ async function cambiarEstado(encender) {
   }
 }
 
-// Consulta periódica
 setInterval(actualizarDatos, 5000);
 actualizarDatos();
 
-// Exponer función para botones del HTML
 window.cambiarEstado = cambiarEstado;
