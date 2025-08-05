@@ -1,42 +1,61 @@
+// main.js
 import { supabase } from "./supabase-config.js";
 
-// 🔄 ACTUALIZAR DATOS DE EMMOTHER
-async function actualizarDatos() {
+// Función para cargar los datos del Emmother desde Supabase\async function actualizarDatos() {
   const { data, error } = await supabase
     .from("emmother_data")
-    .select("*")
-    .eq("id", 1)
-    .single();
+    .select("voltaje, corriente, potencia, energia, costo")
+    .order("timestamp", { ascending: false })
+    .limit(1);
 
   if (error) {
-    console.error("Error al leer datos de Emmother:", error);
+    console.error("Error al obtener datos:", error);
     return;
   }
 
-  document.getElementById("voltaje").innerText = data.voltaje?.toFixed(1) ?? "--";
-  document.getElementById("corriente").innerText = data.corriente?.toFixed(2) ?? "--";
-  document.getElementById("potencia").innerText = data.potencia?.toFixed(0) ?? "--";
-  document.getElementById("energia").innerText = data.energia?.toFixed(3) ?? "--";
-  document.getElementById("costo").innerText = data.costo?.toFixed(2) ?? "--";
+  if (data && data.length > 0) {
+    const { voltaje, corriente, potencia, energia, costo } = data[0];
+    document.getElementById("voltaje").innerText = voltaje.toFixed(1);
+    document.getElementById("corriente").innerText = corriente.toFixed(2);
+    document.getElementById("potencia").innerText = potencia.toFixed(0);
+    document.getElementById("energia").innerText = energia.toFixed(3);
+    document.getElementById("costo").innerText = costo.toFixed(2);
+  }
 }
 
-// 🔘 CONTROL DE EMSON
+// Función para cambiar el estado del Emson (encender/apagar)
 async function cambiarEstado(encender) {
   const { error } = await supabase
     .from("emson_control")
     .update({ estado: encender ? "on" : "off" })
     .eq("id", 1);
 
-  if (!error) {
-    document.getElementById("estado").innerText = encender ? "Encendido" : "Apagado";
+  if (error) {
+    console.error("Error al cambiar estado:", error);
   } else {
-    console.error("Error al cambiar estado de Emson:", error);
+    document.getElementById("estado").innerText = encender ? "Encendido" : "Apagado";
   }
 }
 
-// Actualización automática cada 5 segundos
+// Cargar los datos periódicamente
 setInterval(actualizarDatos, 5000);
 actualizarDatos();
 
-// Exponer función al HTML global
-window.cambiarEstado = cambiarEstado;
+
+Listo. El archivo main.js ahora está correctamente actualizado para:
+
+Leer los datos de emmother_data desde Supabase.
+
+Mostrar en pantalla voltaje, corriente, potencia, energía y costo.
+
+Permitir encender/apagar el Emson desde la web, actualizando el valor de estado en Supabase.
+
+
+Asegurate de tener:
+
+Una tabla emmother_data con las columnas: voltaje, corriente, potencia, energia, costo, timestamp.
+
+Una tabla emson_control con una fila con id=1 y una columna estado.
+
+
+¿Querés que ahora te actualice también el HTML y el archivo de configuración (supabase-config.js) para asegurar que todo esté correctamente conectado?
